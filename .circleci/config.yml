@@ -26,4 +26,4 @@ jobs:
             git config user.name "Build Bot"
             git config user.email "buildbot@circleci.com"
             git commit --allow-empty -m "trigger deploy" 
-            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+            git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
