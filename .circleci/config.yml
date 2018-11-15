@@ -3,6 +3,7 @@ jobs:
   build:
     docker: # run the steps with Docker
       - image: circleci/node:8
+    working_directory: ~/webapp
     steps:
       - checkout
       - run:
@@ -16,10 +17,24 @@ jobs:
       - run: 
           name: Build
           command: npm run build
-      - run:
-          name: Deploy
-          command: git commit --allow-empty -m "Trigger deploy" && git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/webapp
+    steps:
+      - checkout
+      - run:
+          name: Deploy
+          command: git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
